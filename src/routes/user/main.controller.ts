@@ -2,7 +2,6 @@ import { Request, Response } from "express"
 import { TRequest, TResponse } from "./../../types/dto"
 import { RegisterUserDto } from "./dto/register-user.dto"
 import { useHooks } from "./hooks"
-import { prisma } from "./../../configs/prisma"
 import { throwException } from "./../../utils/error-handling"
 import {
   hashPassword,
@@ -14,7 +13,7 @@ import { user as UserModel } from "@prisma/client"
 
 interface DecodedTokenEmail extends Pick<UserModel, "email"> {}
 
-const { register, activateAccount } = useHooks(prisma)
+const { register, activateAccount } = useHooks()
 
 export const USER = {
   REGISTER: async (

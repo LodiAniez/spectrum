@@ -1,7 +1,8 @@
-import { PrismaClient, user as UserModel } from "@prisma/client"
+import { user as UserModel } from "@prisma/client"
 import { RegisterUserDto } from "./dto/register-user.dto"
+import { prisma } from "./../../configs/prisma"
 
-export const useHooks = (prisma: PrismaClient) => {
+export const useHooks = () => {
   const register = async (user: RegisterUserDto): Promise<UserModel> => {
     try {
       const { email, password, firstname, lastname } = user
