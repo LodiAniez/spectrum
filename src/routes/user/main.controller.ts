@@ -4,16 +4,23 @@ import { RegisterUserDto } from "./dto/register-user.dto"
 import { useHooks } from "./hooks"
 import { prisma } from "./../../configs/prisma"
 import { throwException } from "./../../utils/error-handling"
-import { hashPassword, encodeToken, sendEmail } from "./../../utils/main"
+import {
+  hashPassword,
+  encodeToken,
+  sendEmail,
+  verifyToken,
+} from "./../../utils/main"
 import { user as UserModel } from "@prisma/client"
+
+interface DecodedTokenEmail extends Pick<UserModel, "email"> {}
+
+const { register, activateAccount } = useHooks(prisma)
 
 export const USER = {
   REGISTER: async (
     req: TRequest<RegisterUserDto>,
     res: TResponse<Omit<UserModel, "password">>
   ) => {
-    const { register } = useHooks(prisma)
-
     try {
       if (!Object.keys(req.body).length)
         return res.status(400).send("Payload is missing.")
@@ -44,8 +51,29 @@ export const USER = {
       throwException(e, prisma, res)
     }
   },
-  ACTIVATE: (_req: Request, res: Response) => {
-    res.sendStatus(200)
+  ACTIVATE: async (
+    req: TRequest<never, { token: string }>,
+    res: TResponse<Omit<UserModel, "password">>
+  ) => {
+    try {
+      if (!req.params.token) return res.status(400).send("Token is missing.")
+
+      const { token } = req.params
+      const decodedToken = verifyToken(token, "verification")
+
+      if (!decodedToken)
+        return res.status(400).send("Token is invalid or has expired.")
+
+      const { email }: DecodedTokenEmail = decodedToken as DecodedTokenEmail
+
+      const data = await activateAccount(email)
+
+      const { password, ...rest } = data
+
+      res.status(200).json(rest)
+    } catch (e) {
+      throwException(e, prisma, res)
+    }
   },
   CHANGE_PASSWORD: (_req: Request, res: Response) => {
     res.sendStatus(200)

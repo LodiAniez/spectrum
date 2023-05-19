@@ -5,7 +5,7 @@ const router: Router = Router()
 
 router.post("/register", USER.REGISTER)
 
-router.get("/acivate", USER.ACTIVATE)
+router.get("/activate/:token", USER.ACTIVATE)
 
 router.get("/list", USER.LIST)
 

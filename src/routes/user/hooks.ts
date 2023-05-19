@@ -1,8 +1,8 @@
-import { PrismaClient, user as User } from "@prisma/client"
+import { PrismaClient, user as UserModel } from "@prisma/client"
 import { RegisterUserDto } from "./dto/register-user.dto"
 
 export const useHooks = (prisma: PrismaClient) => {
-  const register = async (user: RegisterUserDto): Promise<User> => {
+  const register = async (user: RegisterUserDto): Promise<UserModel> => {
     try {
       const { email, password, firstname, lastname } = user
 
@@ -22,7 +22,26 @@ export const useHooks = (prisma: PrismaClient) => {
     }
   }
 
+  const activateAccount = async (email: string) => {
+    try {
+      const data = await prisma.user.update({
+        where: {
+          email,
+        },
+        data: {
+          isActivated: true,
+        },
+      })
+
+      prisma.$disconnect()
+      return data
+    } catch (e) {
+      throw e
+    }
+  }
+
   return {
     register,
+    activateAccount,
   }
 }
