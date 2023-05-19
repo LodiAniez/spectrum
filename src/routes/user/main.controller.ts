@@ -1,8 +1,48 @@
 import { Request, Response } from "express"
+import { TRequest, TResponse } from "./../../types/dto"
+import { RegisterUserDto } from "./dto/register-user.dto"
+import { useHooks } from "./hooks"
+import { prisma } from "./../../configs/prisma"
+import { throwException } from "./../../utils/error-handling"
+import { hashPassword, encodeToken, sendEmail } from "./../../utils/main"
+import { user as UserModel } from "@prisma/client"
 
 export const USER = {
-  REGISTER: (_req: Request, res: Response) => {
-    res.sendStatus(200)
+  REGISTER: async (
+    req: TRequest<RegisterUserDto>,
+    res: TResponse<Omit<UserModel, "password">>
+  ) => {
+    const { register } = useHooks(prisma)
+
+    try {
+      if (!Object.keys(req.body).length)
+        return res.status(400).send("Payload is missing.")
+
+      if (!req.body.email || !req.body.password)
+        return res.status(400).send("Email and password is required.")
+
+      const { password, email } = req.body
+
+      const hashedPassword = hashPassword(password)
+
+      const data = await register({
+        ...req.body,
+        password: hashedPassword,
+      })
+
+      // generate a token for verification
+      const verificationToken = encodeToken(data, "verification")
+
+      // Send verification email, we won't wait for this to resolve
+      sendEmail(email, verificationToken)
+
+      // We don't send the password to FE even if it is hashed
+      const { password: pass, ...rest } = data
+
+      res.status(200).json(rest)
+    } catch (e) {
+      throwException(e, prisma, res)
+    }
   },
   ACTIVATE: (_req: Request, res: Response) => {
     res.sendStatus(200)
