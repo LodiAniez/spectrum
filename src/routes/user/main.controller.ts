@@ -48,7 +48,7 @@ export const USER = {
 
       res.status(200).json(rest)
     } catch (e) {
-      throwException(e, prisma, res)
+      throwException(e, res)
     }
   },
   ACTIVATE: async (
@@ -72,7 +72,7 @@ export const USER = {
 
       res.status(200).json(rest)
     } catch (e) {
-      throwException(e, prisma, res)
+      throwException(e, res)
     }
   },
   CHANGE_PASSWORD: (_req: Request, res: Response) => {

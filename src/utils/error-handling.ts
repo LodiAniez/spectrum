@@ -1,4 +1,4 @@
-import { Prisma, PrismaClient } from "@prisma/client"
+import { Prisma } from "@prisma/client"
 import { Response } from "express"
 
 /**
@@ -8,14 +8,10 @@ import { Response } from "express"
  * @param res express `res` object so we can send a response to client whenever there are client exceptions thrown
  * @returns
  */
-export const throwException = (
-  e: unknown,
-  prisma?: PrismaClient,
-  res?: Response
-) => {
+export const throwException = (e: unknown, res?: Response) => {
   const err: Error = e as Error
 
-  if (err instanceof Prisma.PrismaClientKnownRequestError && prisma && res) {
+  if (err instanceof Prisma.PrismaClientKnownRequestError && res) {
     // Duplicate error from prisma
     if (err.code === "P2002") {
       return res
@@ -24,8 +20,6 @@ export const throwException = (
           `Same ${err.meta?.target} is already registered from the database.`
         )
     }
-
-    prisma.$disconnect()
   }
 
   throw err

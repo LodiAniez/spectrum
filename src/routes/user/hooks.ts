@@ -15,7 +15,6 @@ export const useHooks = (prisma: PrismaClient) => {
         },
       })
 
-      prisma.$disconnect()
       return data
     } catch (e) {
       throw e
@@ -33,7 +32,6 @@ export const useHooks = (prisma: PrismaClient) => {
         },
       })
 
-      prisma.$disconnect()
       return data
     } catch (e) {
       throw e
