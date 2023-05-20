@@ -70,6 +70,7 @@ export const sendEmail = (receiver: string, token: string) => {
     .sendMail({
       from: MAILER_USERNAME,
       to: receiver,
+      subject: "Account Activation",
       html: `
       <div style="padding: 10px; border: 1px solid #cccccc; border-radius: 10px">
         <p>Congratulations! You have registered successfully! Please click this <a href="http://localhost:3000/user/activate/${token}">link</a> to verify your account. This link will expire in 1 day.</p>
