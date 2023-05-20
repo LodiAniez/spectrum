@@ -1,1 +1,4 @@
-export const TOKEN_EXPIRY = "1d"
+export enum TOKEN {
+  EXPIRY = "1d",
+  TYPE = "Bearer",
+}

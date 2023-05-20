@@ -29,7 +29,7 @@ export const USER = {
 
       const { password, email } = req.body
 
-      const hashedPassword = hashPassword(password)
+      const hashedPassword = await hashPassword(password)
 
       const data = await register({
         ...req.body,

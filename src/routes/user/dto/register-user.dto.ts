@@ -1,6 +1,4 @@
-export interface RegisterUserDto {
-  email: string
-  password: string
-  firstname?: string
-  lastname?: string
-}
+import { user as UserModel } from "@prisma/client"
+
+export interface RegisterUserDto
+  extends Pick<UserModel, "email" | "password" | "firstname" | "lastname"> {}

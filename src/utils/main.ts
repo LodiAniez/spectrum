@@ -1,4 +1,4 @@
-import { hashSync } from "bcrypt"
+import { hash, compare } from "bcrypt"
 import { SignOptions, sign, verify } from "jsonwebtoken"
 import {
   SALT,
@@ -7,7 +7,7 @@ import {
   VERIFICATION_TOKEN_SECRET,
   MAILER_USERNAME,
 } from "./../configs/secrets"
-import { TOKEN_EXPIRY } from "./../constants"
+import { TOKEN } from "./../constants"
 import { transporter } from "./../configs/mailer"
 
 type TokenPurpose = "access" | "refresh" | "verification"
@@ -20,8 +20,25 @@ const setTokenSecret = (purpose: TokenPurpose) => {
     : REFRESH_TOKEN_SECRET
 }
 
-export const hashPassword = (password: string) => {
-  return hashSync(password, Number(SALT))
+export const hashPassword = async (password: string) => {
+  try {
+    return hash(password, Number(SALT))
+  } catch (e) {
+    throw e
+  }
+}
+
+export const comparePassword = async (
+  plainPassword: string,
+  hashedPassword: string
+) => {
+  try {
+    const isCorrect = await compare(plainPassword, hashedPassword)
+
+    return isCorrect
+  } catch (e) {
+    return null
+  }
 }
 
 export const encodeToken = (data: any, purpose: TokenPurpose) => {
@@ -33,7 +50,7 @@ export const encodeToken = (data: any, purpose: TokenPurpose) => {
    * by simply removing it from db
    */
   const options: SignOptions | undefined =
-    purpose === "refresh" ? undefined : { expiresIn: TOKEN_EXPIRY }
+    purpose === "refresh" ? undefined : { expiresIn: TOKEN.EXPIRY }
 
   return sign(data, secret, options)
 }

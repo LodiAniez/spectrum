@@ -11,8 +11,8 @@ export const useHooks = () => {
         data: {
           email,
           password,
-          firstname: firstname ?? null,
-          lastname: lastname ?? null,
+          firstname,
+          lastname,
         },
       })
 
