@@ -60,9 +60,30 @@ export const useHooks = () => {
     }
   }
 
+  const changePassword = async ({
+    id,
+    password,
+  }: Pick<UserModel, "id" | "password">) => {
+    try {
+      const query = await prisma.user.update({
+        where: {
+          id,
+        },
+        data: {
+          password,
+        },
+      })
+
+      return query
+    } catch (e) {
+      throw e
+    }
+  }
+
   return {
     register,
     activateAccount,
     userList,
+    changePassword,
   }
 }

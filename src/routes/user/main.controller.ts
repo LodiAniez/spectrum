@@ -1,4 +1,3 @@
-import { Request, Response } from "express"
 import { TRequest, TResponse } from "./../../types/dto"
 import { RegisterUserDto } from "./dto/register-user.dto"
 import { useHooks } from "./hooks"
@@ -11,10 +10,14 @@ import {
 } from "./../../utils/main"
 import { user as UserModel } from "@prisma/client"
 import { UserListResponseDto } from "./dto/user-list.dto"
+import {
+  ChangePasswordDto,
+  ChangePasswordResponseDto,
+} from "./dto/change-password.dto"
 
 interface DecodedTokenEmail extends Pick<UserModel, "email"> {}
 
-const { register, activateAccount, userList } = useHooks()
+const { register, activateAccount, userList, changePassword } = useHooks()
 
 export const USER = {
   REGISTER: async (
@@ -75,8 +78,31 @@ export const USER = {
       throwException(e, res)
     }
   },
-  CHANGE_PASSWORD: (_req: Request, res: Response) => {
-    res.sendStatus(200)
+  CHANGE_PASSWORD: async (
+    req: TRequest<ChangePasswordDto>,
+    res: TResponse<ChangePasswordResponseDto>
+  ) => {
+    try {
+      // `req.user` should now be defined
+      const user = req.user!
+
+      if (!user.id) return res.status(400).send("Data is invalid")
+      if (!req.body.password)
+        return res.status(400).send("New password is required.")
+
+      const hashedPassword = await hashPassword(req.body.password)
+
+      const result = await changePassword({
+        id: user.id,
+        password: hashedPassword,
+      })
+
+      res.status(200).json({
+        success: !!result,
+      })
+    } catch (e) {
+      throwException(e, res)
+    }
   },
   LIST: async (req: TRequest, res: TResponse<UserListResponseDto>) => {
     try {

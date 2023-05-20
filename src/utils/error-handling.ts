@@ -4,7 +4,6 @@ import { Response } from "express"
 /**
  *
  * @param e error object
- * @param prisma prisma client so we can close the connection whenever there is an exception thrown
  * @param res express `res` object so we can send a response to client whenever there are client exceptions thrown
  * @returns
  */
