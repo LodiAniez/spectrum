@@ -1,4 +1,4 @@
-import { user as UserModel } from "@prisma/client"
+import { User as UserModel } from "@prisma/client"
 import { TOKEN } from "../../../constants"
 
 export interface LoginDto extends Pick<UserModel, "email" | "password"> {}

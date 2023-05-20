@@ -2,7 +2,7 @@ import { Response, NextFunction } from "express"
 import { verifyToken } from "./../utils/main"
 import { TOKEN } from "./../constants"
 import { TRequest } from "./../types/dto"
-import { user as UserModel } from "@prisma/client"
+import { User as UserModel } from "@prisma/client"
 
 export const checkToken = (
   req: TRequest,

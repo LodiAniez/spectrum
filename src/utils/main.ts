@@ -60,7 +60,7 @@ export const verifyToken = (token: string, tokenFor: TokenPurpose) => {
 
   try {
     return verify(token, secret)
-  } catch (_e) {
+  } catch (e) {
     return null
   }
 }

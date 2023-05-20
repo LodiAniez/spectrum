@@ -1,6 +1,6 @@
 import { Request, Response } from "express"
 import { Send, ParamsDictionary } from "express-serve-static-core"
-import { user as UserModel } from "@prisma/client"
+import { User as UserModel } from "@prisma/client"
 
 /**
  *

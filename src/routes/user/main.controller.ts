@@ -8,7 +8,7 @@ import {
   sendEmail,
   verifyToken,
 } from "./../../utils/main"
-import { user as UserModel } from "@prisma/client"
+import { User as UserModel } from "@prisma/client"
 import { UserListResponseDto } from "./dto/user-list.dto"
 import {
   ChangePasswordDto,

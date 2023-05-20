@@ -1,5 +1,5 @@
 import { prisma } from "./../../configs/prisma"
-import { user as UserModel } from "@prisma/client"
+import { User as UserModel } from "@prisma/client"
 
 export const useHooks = () => {
   const login = async (email: string): Promise<UserModel | null> => {

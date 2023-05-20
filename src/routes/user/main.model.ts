@@ -7,6 +7,9 @@ const router: Router = Router()
 
 router.post("/register", USER.REGISTER)
 
+/**
+ * This endpoint is triggered when the link is clicked from email
+ */
 router.get("/activate/:token", USER.ACTIVATE)
 
 router.get("/list", checkToken, USER.LIST)
