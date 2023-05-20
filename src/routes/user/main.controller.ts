@@ -10,10 +10,11 @@ import {
   verifyToken,
 } from "./../../utils/main"
 import { user as UserModel } from "@prisma/client"
+import { UserListResponseDto } from "./dto/user-list.dto"
 
 interface DecodedTokenEmail extends Pick<UserModel, "email"> {}
 
-const { register, activateAccount } = useHooks()
+const { register, activateAccount, userList } = useHooks()
 
 export const USER = {
   REGISTER: async (
@@ -77,7 +78,17 @@ export const USER = {
   CHANGE_PASSWORD: (_req: Request, res: Response) => {
     res.sendStatus(200)
   },
-  LIST: (_req: Request, res: Response) => {
-    res.sendStatus(200)
+  LIST: async (req: TRequest, res: TResponse<UserListResponseDto>) => {
+    try {
+      const user = req.user
+
+      const list = await userList(user)
+
+      res.status(200).json({
+        list,
+      })
+    } catch (e) {
+      throwException(e, res)
+    }
   },
 }

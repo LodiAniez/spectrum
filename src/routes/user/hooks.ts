@@ -1,4 +1,4 @@
-import { user as UserModel } from "@prisma/client"
+import { Prisma, user as UserModel } from "@prisma/client"
 import { RegisterUserDto } from "./dto/register-user.dto"
 import { prisma } from "./../../configs/prisma"
 
@@ -39,8 +39,30 @@ export const useHooks = () => {
     }
   }
 
+  const userList = async (user?: UserModel) => {
+    try {
+      const selectUsers = Prisma.validator<Prisma.userSelect>()({
+        email: !!user,
+        lastname: !!user,
+        firstname: !!user,
+        createdAt: true,
+        updatedAt: true,
+        isActivated: true,
+      })
+
+      const list = await prisma.user.findMany({
+        select: selectUsers,
+      })
+
+      return list
+    } catch (e) {
+      throw e
+    }
+  }
+
   return {
     register,
     activateAccount,
+    userList,
   }
 }
